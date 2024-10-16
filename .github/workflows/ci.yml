@@ -18,21 +18,15 @@ jobs:
 
       # Discord Token を Cloudflare Workers に追加
       - name: Set Discord Token as secret
-        env:
-          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-        run: wrangler secret put DISCORD_TOKEN --from-env DISCORD_TOKEN
+        run: echo ${{ secrets.DISCORD_TOKEN }} | wrangler secret put DISCORD_TOKEN
 
       # Discord Public Key を Cloudflare Workers に追加
       - name: Set Discord Public Key as secret
-        env:
-          DISCORD_PUBLIC_KEY: ${{ secrets.DISCORD_PUBLIC_KEY }}
-        run: wrangler secret put DISCORD_PUBLIC_KEY --from-env DISCORD_PUBLIC_KEY
+        run: echo ${{ secrets.DISCORD_PUBLIC_KEY }} | wrangler secret put DISCORD_PUBLIC_KEY
 
       # Discord Application ID を Cloudflare Workers に追加
       - name: Set Discord Application ID as secret
-        env:
-          DISCORD_APPLICATION_ID: ${{ secrets.DISCORD_APPLICATION_ID }}
-        run: wrangler secret put DISCORD_APPLICATION_ID --from-env DISCORD_APPLICATION_ID
+        run: echo ${{ secrets.DISCORD_APPLICATION_ID }} | wrangler secret put DISCORD_APPLICATION_ID
 
       # TypeScript をビルドして dist フォルダに出力
       - name: Build TypeScript files
