@@ -1,5 +1,5 @@
 #:schema node_modules/wrangler/config-schema.json
-name = "odd-river-9bf2"
+name = "kuromichan-discord-bot"
 main = "src/index.ts"
 compatibility_date = "2024-10-11"
 compatibility_flags = ["nodejs_compat"]
