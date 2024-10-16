@@ -14,7 +14,7 @@ jobs:
 
       # install wrangler
       - name: Install wrangler
-        run: npm install -g @cloudflare/wrangler
+        run: npm install -g wrangler
 
       # Discord Token を Cloudflare Workers に追加
       - name: Set Discord Token as secret
