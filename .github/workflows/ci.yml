@@ -21,7 +21,7 @@ jobs:
           DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
           DISCORD_PUBLIC_KEY: ${{ secrets.DISCORD_PUBLIC_KEY }}
           DISCORD_APPLICATION_ID: ${{ secrets.DISCORD_APPLICATION_ID }}
-        run: npm i -g ts-node && npm run register
+        run: npm i -g tsx && npm run register
 
       # Cloudflare Workers へのデプロイ
       - name: Deploy
