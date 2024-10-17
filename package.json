@@ -9,12 +9,11 @@
 		"start": "wrangler dev",
 		"test": "vitest",
 		"cf-typegen": "wrangler types",
-		"register": "ts-node src/register/index.ts"
+		"register": "tsx src/register/index.ts"
 	},
 	"devDependencies": {
 		"@cloudflare/vitest-pool-workers": "^0.5.2",
 		"@cloudflare/workers-types": "^4.20241011.0",
-		"typescript": "^5.5.2",
 		"vitest": "2.0.5",
 		"wrangler": "^3.60.3"
 	},
@@ -24,6 +23,7 @@
 		"discordx": "^11.12.1",
 		"dotenv": "^16.4.5",
 		"itty-router": "^5.0.18",
-		"node-fetch": "^3.3.2"
+		"node-fetch": "^3.3.2",
+		"tsx": "^4.19.1"
 	}
 }
