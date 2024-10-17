@@ -11,26 +11,9 @@ jobs:
     name: Deploy
     steps:
       - uses: actions/checkout@v3
-
-      # install wrangler
-      - name: Install wrangler
-        run: npm install -g wrangler
-
-      # Discord Token を Cloudflare Workers に追加
-      - name: Set Discord Token as secret
-        run: echo ${{ secrets.DISCORD_TOKEN }} | wrangler secret put DISCORD_TOKEN
-
-      # Discord Public Key を Cloudflare Workers に追加
-      - name: Set Discord Public Key as secret
-        run: echo ${{ secrets.DISCORD_PUBLIC_KEY }} | wrangler secret put DISCORD_PUBLIC_KEY
-
-      # Discord Application ID を Cloudflare Workers に追加
-      - name: Set Discord Application ID as secret
-        run: echo ${{ secrets.DISCORD_APPLICATION_ID }} | wrangler secret put DISCORD_APPLICATION_ID
-
-      # TypeScript をビルドして dist フォルダに出力
-      - name: Build TypeScript files
-        run: npm install && npm run build
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
 
       # Discord コマンドを登録
       - name: Register Discord commands
@@ -38,11 +21,11 @@ jobs:
           DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
           DISCORD_PUBLIC_KEY: ${{ secrets.DISCORD_PUBLIC_KEY }}
           DISCORD_APPLICATION_ID: ${{ secrets.DISCORD_APPLICATION_ID }}
-        run: npm run register
+        run: npm i -g ts-node && npm run register
 
       # Cloudflare Workers へのデプロイ
       - name: Deploy
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CF_API_TOKEN }}
-          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+        run: npm run deploy
+        env:
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}

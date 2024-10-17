@@ -2,14 +2,14 @@
 	"name": "kuromichan-discord-bot",
 	"version": "0.0.0",
 	"private": true,
+	"type": "module",
 	"scripts": {
 		"deploy": "wrangler deploy",
 		"dev": "wrangler dev",
 		"start": "wrangler dev",
 		"test": "vitest",
 		"cf-typegen": "wrangler types",
-		"build": "tsc",
-		"register": "node dist/register.js"
+		"register": "ts-node src/register/index.ts"
 	},
 	"devDependencies": {
 		"@cloudflare/vitest-pool-workers": "^0.5.2",
@@ -19,9 +19,11 @@
 		"wrangler": "^3.60.3"
 	},
 	"dependencies": {
+		"discord-interactions": "^4.1.0",
 		"discord.js": "^14.16.3",
 		"discordx": "^11.12.1",
 		"dotenv": "^16.4.5",
+		"itty-router": "^5.0.18",
 		"node-fetch": "^3.3.2"
 	}
 }

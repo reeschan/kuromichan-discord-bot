@@ -1,4 +1,4 @@
-import { AWW_COMMAND, INVITE_COMMAND } from './commands';
+import { CommandList } from './commands';
 import fetch, { Response } from 'node-fetch';
 
 /**
@@ -33,7 +33,7 @@ async function registerCommands(url: string): Promise<Response> {
 			Authorization: `Bot ${token}`,
 		},
 		method: 'PUT',
-		body: JSON.stringify([AWW_COMMAND, INVITE_COMMAND]),
+		body: JSON.stringify(CommandList),
 	});
 
 	if (response.ok) {
