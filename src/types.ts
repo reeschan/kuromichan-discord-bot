@@ -26,7 +26,6 @@ type DiscordApplicationCommandOption = {
 };
 
 export type DiscordApplicationCommand = {
-	id?: number;
 	type: keyof [DiscordApplicationCommandType];
 	application_id?: number;
 	guild_id?: number;

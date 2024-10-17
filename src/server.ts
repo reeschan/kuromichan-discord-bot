@@ -39,19 +39,31 @@ router.post('/', async (request: Request, env: any): Promise<Response> => {
 		// Most user commands will come as `APPLICATION_COMMAND`.
 		switch (interaction.data.name.toLowerCase()) {
 			case CommnadType.DELETE_POST_REGISTER: {
+				console.log(interaction);
+				// kvにguildId, channnelId, interaction.data.options[0].valueを保存
+				try {
+				} catch (error) {
+					console.error(error);
+				}
+
+				const DELETE_POST_MAP: KVNamespace = env.DELETE_POST_MAP;
+				await DELETE_POST_MAP.put(
+					interaction.guild_id,
+					JSON.stringify({ channel_id: interaction.channel_id, time: interaction.data.options[0].value })
+				);
+
 				return new JsonResponse({
 					type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
 					data: {
-						content: 'https://cdn.discordapp.com/attachments/891978000000000000/891978000000000000/awww.gif',
+						content: '登録したよ!',
 					},
 				});
 			}
 			case CommnadType.HELLO: {
-				const applicationId = env.DISCORD_APPLICATION_ID;
 				return new JsonResponse({
 					type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
 					data: {
-						content: 'アタイはクロミだよっ！',
+						content: 'クロミちゃんかわいいいいいいい！',
 					},
 				});
 			}

@@ -1,12 +1,17 @@
-import { DiscordApplicationCommand, DiscordApplicationCommandType } from '../types';
-import { SlashCommandBuilder } from 'discord.js';
-
-const aaa = new SlashCommandBuilder().setName('delete').setDescription('del;ete');
+import { DiscordApplicationCommand, DiscordApplicationCommandType, DiscordApplicationCommnadOptionType } from '../types';
 
 const DELETE_POST_REGISTER: DiscordApplicationCommand = {
 	name: 'deletepostregister',
 	type: DiscordApplicationCommandType.CAHT_INPUT,
 	description: 'コマンドを打ったチャンネル内のチャットを〇seconds後に削除する',
+	options: [
+		{
+			name: '時間',
+			type: 4,
+			description: '削除するまでの時間を時間（分）で指定',
+			required: true,
+		},
+	],
 };
 
 const HELLO: DiscordApplicationCommand = {
@@ -22,4 +27,4 @@ export const CommnadType = {
 
 export type CommandType = (typeof CommnadType)[keyof typeof CommnadType];
 
-export const CommandList = [DELETE_POST_REGISTER, HELLO, aaa];
+export const CommandList = [DELETE_POST_REGISTER, HELLO];

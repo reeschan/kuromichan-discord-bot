@@ -1,12 +1,7 @@
-import { CommandList } from './commands';
-import fetch, { Response } from 'node-fetch';
+import { REST, Routes, SlashCommandBuilder } from 'discord.js';
+import { CommandList } from './commands'; // コマンドリストのインポート
 
-/**
- * This file is meant to be run from the command line, and is not used by the
- * application server.  It's allowed to use node.js primitives, and only needs
- * to be run once.
- */
-
+// 環境変数の読み込み
 const token = process.env.DISCORD_TOKEN;
 const applicationId = process.env.DISCORD_APPLICATION_ID;
 
@@ -17,35 +12,24 @@ if (!applicationId) {
 	throw new Error('The DISCORD_APPLICATION_ID environment variable is required.');
 }
 
-/**
- * Register all commands globally.  This can take o(minutes), so wait until
- * you're sure these are the commands you want.
- */
-async function registerGlobalCommands(): Promise<void> {
-	const url = `https://discord.com/api/v10/applications/${applicationId}/commands`;
-	await registerCommands(url);
-}
+// RESTクライアントを初期化
+const rest = new REST({ version: '10' }).setToken(token);
 
-async function registerCommands(url: string): Promise<Response> {
-	const response = await fetch(url, {
-		headers: {
-			'Content-Type': 'application/json',
-			Authorization: `Bot ${token}`,
-		},
-		method: 'PUT',
-		body: JSON.stringify(CommandList),
-	});
+// グローバルコマンドを登録する関数
+async function registerGlobalCommands() {
+	try {
+		console.log('Started registering global application commands.');
 
-	if (response.ok) {
-		console.log('Registered all commands');
-	} else {
-		console.error('Error registering commands');
-		const text = await response.text();
-		console.error(text);
+		// DiscordのAPIにPUTリクエストを送信
+		await rest.put(Routes.applicationCommands(applicationId!), { body: CommandList });
+
+		console.log('Successfully registered all global application commands.');
+	} catch (error) {
+		console.error('Error registering global commands:', error);
 	}
-	return response;
 }
 
+// コマンド登録の実行
 registerGlobalCommands().catch((err) => {
 	console.error('Failed to register commands:', err);
 });

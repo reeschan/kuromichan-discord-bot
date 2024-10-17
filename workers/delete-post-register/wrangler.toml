@@ -1,8 +1,8 @@
 #:schema node_modules/wrangler/config-schema.json
-name = "kuromichan"
-main = "src/server.ts"
-compatibility_flags = [ "nodejs_compat" ]
+name = "delete-post-register"
+main = "src/index.ts"
 compatibility_date = "2024-10-11"
+compatibility_flags = ["nodejs_compat"]
 
 # Workers Logs
 # Docs: https://developers.cloudflare.com/workers/observability/logs/workers-logs/
@@ -13,6 +13,10 @@ enabled = true
 [[kv_namespaces]]
 binding = "DELETE_POST_MAP"
 id = "8129129da38e414aa933fbba3eb5ce13"
+
+[triggers]
+crons = ["*/1 * * * *"]
+
 
 # [secrets]
 # DISCORD_TOKEN
