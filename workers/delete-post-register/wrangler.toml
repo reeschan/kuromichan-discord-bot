@@ -15,7 +15,7 @@ binding = "DELETE_POST_MAP"
 id = "8129129da38e414aa933fbba3eb5ce13"
 
 [triggers]
-crons = ["*/1 * * * *"]
+crons = ["*/5 * * * *"]
 
 
 # [secrets]
