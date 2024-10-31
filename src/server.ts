@@ -41,11 +41,6 @@ router.post('/', async (request: Request, env: any): Promise<Response> => {
 		switch (interaction.data.name.toLowerCase()) {
 			case CommnadType.DELETE_POST_REGISTER: {
 				console.log(interaction);
-				// kvにguildId, channnelId, interaction.data.options[0].valueを保存
-				try {
-				} catch (error) {
-					console.error(error);
-				}
 
 				const DELETE_POST_MAP: KVNamespace = env.DELETE_POST_MAP;
 				await DELETE_POST_MAP.put(
@@ -92,26 +87,33 @@ router.post('/', async (request: Request, env: any): Promise<Response> => {
 					#出力文：
 					モデリング対象のみを5つ候補としてカンマ区切りで提示。
 				`;
+				try {
+					const completion = await openAiClient.chat.completions.create({
+						model: model,
+						messages: [
+							{ role: 'system', content: command }, // 修正箇所
+							{
+								role: 'user',
+								content: `今回のお題の難しさはレベル5段階中「${level}」でジャンルは「${genre}」として、お題を考えてください。`,
+							},
+						],
+						stream: false,
+					});
 
-				// openaiにリクエストを送信
-				const completion = await openAiClient.chat.completions.create({
-					model: model,
-					messages: [
-						{ role: 'system', content: command }, // 修正箇所
-						{
-							role: 'user',
-							content: `今回のお題の難しさはレベル5段階中「${level}」でジャンルは「${genre}」として、お題を考えてください。`,
+					return new JsonResponse({
+						type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+						data: {
+							content: completion.choices[0].message.content,
 						},
-					],
-					stream: false,
-				});
-
-				return new JsonResponse({
-					type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-					data: {
-						content: completion.choices[0].message.content,
-					},
-				});
+					});
+				} catch (error) {
+					console.error(error);
+					return new JsonResponse({
+						type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+						data: { content: 'エラーが発生しました。' },
+					});
+				}
+				// openaiにリクエストを送信
 			}
 			default:
 				return new JsonResponse({ error: 'Unknown Type' }, { status: 400 });
