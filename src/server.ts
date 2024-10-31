@@ -3,9 +3,11 @@
  */
 
 import { AutoRouter } from 'itty-router';
-import { InteractionResponseType, InteractionType, verifyKey, InteractionResponseFlags } from 'discord-interactions';
+import { InteractionResponseType, InteractionType, verifyKey } from 'discord-interactions';
 import { CommnadType } from './register/commands';
 import { JsonResponse } from './types';
+import OpenAI from 'openai';
+import openai from 'openai';
 
 const router = AutoRouter();
 
@@ -14,6 +16,10 @@ const router = AutoRouter();
  */
 router.get('/', (request: Request, env: any) => {
 	return new Response(`👋 ${env.DISCORD_APPLICATION_ID}`);
+});
+
+const openAiClient = new OpenAI({
+	apiKey: process.env['OPENAI_API_KEY'], // This is the default and can be omitted
 });
 
 /**
@@ -64,6 +70,47 @@ router.post('/', async (request: Request, env: any): Promise<Response> => {
 					type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
 					data: {
 						content: 'クロミちゃんかわいいいいいいい！',
+					},
+				});
+			}
+			case CommnadType.MODELING_SUGGESTER: {
+				const level = interaction.data.options[0].value ?? Math.random() * 5;
+				const genre = interaction.data.options[1].value ?? 'なんでも';
+				const model = interaction.data.options[2].value ?? 'gpt-4o-mini';
+
+				const command = `
+					#命令
+				
+					あなたは一流のモデラーです。後輩にお題を出してモデリングしてもらいます。
+				
+					#条件：
+				
+					モデリング対象のみを5つ候補としてカンマ区切りで提示してください。
+				
+					#入力文：
+					
+					お題のレベルとジャンルを指定する。
+				
+					#出力文：
+					モデリング対象のみを5つ候補としてカンマ区切りで提示。
+				`;
+
+				// openaiにリクエストを送信
+				const completion = await openAiClient.chat.completions.create({
+					model: model,
+					messages: [
+						{ role: 'system', content: command }, // 修正箇所
+						{
+							role: 'user',
+							content: `今回のお題の難しさはレベル5段階中「${level}」でジャンルは「${genre}」として、お題を考えてください。`,
+						},
+					],
+				});
+
+				return new JsonResponse({
+					type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+					data: {
+						content: completion.choices[0].message.content,
 					},
 				});
 			}
