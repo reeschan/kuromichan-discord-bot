@@ -103,6 +103,7 @@ router.post('/', async (request: Request, env: any): Promise<Response> => {
 							content: `今回のお題の難しさはレベル5段階中「${level}」でジャンルは「${genre}」として、お題を考えてください。`,
 						},
 					],
+					stream: false,
 				});
 
 				return new JsonResponse({
