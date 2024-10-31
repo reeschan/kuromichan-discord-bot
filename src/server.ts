@@ -82,6 +82,7 @@ router.post('/', async (request: Request, env: any): Promise<Response> => {
 						#条件：
 					
 						モデリング対象のみを5つ候補としてカンマ区切りで提示してください。
+						レベル5以上の場合は、この世の中に存在しない非常に難しいものを提示してください。
 					
 						#入力文：
 						
