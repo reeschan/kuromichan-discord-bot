@@ -69,9 +69,10 @@ router.post('/', async (request: Request, env: any): Promise<Response> => {
 					const openAiClient = new OpenAI({
 						apiKey: env.OPENAI_API_KEY,
 					});
-					const level = interaction.data.options[0]?.value ?? Math.random() * 5;
-					const genre = interaction.data.options[1]?.value ?? 'なんでも';
-					const model = interaction.data.options[2]?.value ?? 'gpt-4o-mini';
+					// オプションの存在を確認してから代入
+					const level = interaction.data?.options?.[0]?.value ?? Math.random() * 5;
+					const genre = interaction.data?.options?.[1]?.value ?? 'なんでも';
+					const model = interaction.data?.options?.[2]?.value ?? 'gpt-4o-mini';
 
 					const command = `
 						#命令
