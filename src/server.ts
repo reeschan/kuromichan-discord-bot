@@ -64,30 +64,31 @@ router.post('/', async (request: Request, env: any): Promise<Response> => {
 				});
 			}
 			case CommnadType.MODELING_SUGGESTER: {
-				const openAiClient = new OpenAI({
-					apiKey: env.OPENAI_API_KEY,
-				});
-				const level = interaction.data.options[0].value ?? Math.random() * 5;
-				const genre = interaction.data.options[1].value ?? 'なんでも';
-				const model = interaction.data.options[2].value ?? 'gpt-4o-mini';
-
-				const command = `
-					#命令
-				
-					あなたは一流のモデラーです。後輩にお題を出してモデリングしてもらいます。
-				
-					#条件：
-				
-					モデリング対象のみを5つ候補としてカンマ区切りで提示してください。
-				
-					#入力文：
-					
-					お題のレベルとジャンルを指定する。
-				
-					#出力文：
-					モデリング対象のみを5つ候補としてカンマ区切りで提示。
-				`;
+				console.log('MODELING_SUGGESTER');
 				try {
+					const openAiClient = new OpenAI({
+						apiKey: env.OPENAI_API_KEY,
+					});
+					const level = interaction.data.options[0].value ?? Math.random() * 5;
+					const genre = interaction.data.options[1].value ?? 'なんでも';
+					const model = interaction.data.options[2].value ?? 'gpt-4o-mini';
+
+					const command = `
+						#命令
+					
+						あなたは一流のモデラーです。後輩にお題を出してモデリングしてもらいます。
+					
+						#条件：
+					
+						モデリング対象のみを5つ候補としてカンマ区切りで提示してください。
+					
+						#入力文：
+						
+						お題のレベルとジャンルを指定する。
+					
+						#出力文：
+						モデリング対象のみを5つ候補としてカンマ区切りで提示。
+					`;
 					const completion = await openAiClient.chat.completions.create({
 						model: model,
 						messages: [
@@ -99,6 +100,7 @@ router.post('/', async (request: Request, env: any): Promise<Response> => {
 						],
 						stream: false,
 					});
+					console.log(completion);
 
 					return new JsonResponse({
 						type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
