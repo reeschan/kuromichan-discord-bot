@@ -6,7 +6,7 @@ import { AutoRouter } from 'itty-router';
 import { InteractionResponseType, InteractionType, verifyKey } from 'discord-interactions';
 import { CommnadType } from './register/commands';
 import { JsonResponse } from './types';
-import OpenAI from 'openai';
+import OpenAIAction from './actions/openai-action';
 
 const router = AutoRouter();
 
@@ -27,88 +27,71 @@ router.post('/', async (request: Request, env: any): Promise<Response> => {
 	if (!isValid || !interaction) {
 		return new Response('Bad request signature.', { status: 401 });
 	}
-
 	if (interaction.type === InteractionType.PING) {
-		// The `PING` message is used during the initial webhook handshake, and is
-		// required to configure the webhook in the developer portal.
 		return new JsonResponse({
 			type: InteractionResponseType.PONG,
 		});
 	}
 
 	if (interaction.type === InteractionType.APPLICATION_COMMAND) {
-		// Most user commands will come as `APPLICATION_COMMAND`.
 		switch (interaction.data.name.toLowerCase()) {
 			case CommnadType.DELETE_POST_REGISTER: {
-				console.log(interaction);
-
 				const DELETE_POST_MAP: KVNamespace = env.DELETE_POST_MAP;
 				await DELETE_POST_MAP.put(
 					interaction.guild_id,
 					JSON.stringify({ channel_id: interaction.channel_id, time: interaction.data.options[0].value })
 				);
-
 				return new JsonResponse({
 					type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-					data: {
-						content: '登録したよ!',
-					},
+					data: { content: '登録したよ!' },
 				});
 			}
 			case CommnadType.HELLO: {
 				return new JsonResponse({
 					type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-					data: {
-						content: 'クロミちゃんかわいいいいいいい！',
-					},
+					data: { content: 'クロミちゃんかわいいいいいいい！' },
 				});
 			}
 			case CommnadType.MODELING_SUGGESTER: {
-				console.log('MODELING_SUGGESTER');
+				const openAiAction = new OpenAIAction(env.OPENAI_API_KEY);
+				const level = interaction.data?.options?.[0]?.value ?? Math.random() * 5;
+				const genre = interaction.data?.options?.[1]?.value ?? 'なんでも';
+				const model = interaction.data?.options?.[2]?.value ?? 'gpt-4o-mini';
+
+				const result = await openAiAction.suggestModelingOptions(level, genre, model);
+
+				return new JsonResponse({
+					type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+					data: { content: result },
+				});
+			}
+			case CommnadType.MODELING_SCORING: {
+				const openAiAction = new OpenAIAction(env.OPENAI_API_KEY);
 				try {
-					const openAiClient = new OpenAI({
-						apiKey: env.OPENAI_API_KEY,
-					});
-					// オプションの存在を確認してから代入
-					const level = interaction.data?.options?.[0]?.value ?? Math.random() * 5;
-					const genre = interaction.data?.options?.[1]?.value ?? 'なんでも';
+					// 添付画像を取得してbase64に変換
+					const attachmentId = interaction.data?.resolved?.attachments ? Object.keys(interaction.data.resolved.attachments)[0] : null;
+
+					if (!attachmentId) {
+						return new JsonResponse({
+							type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+							data: { content: '画像が添付されていません。' },
+						});
+					}
+
+					const attachment = interaction.data.resolved.attachments[attachmentId];
+					const imageUrl = attachment.url;
+					const imageResponse = await fetch(imageUrl);
+					const imageArrayBuffer = await imageResponse.arrayBuffer();
+					const base64Image = Buffer.from(imageArrayBuffer).toString('base64');
+					const moderingTarget = interaction.data?.options?.[0]?.value;
+					const prompt = interaction.data?.options?.[1]?.value;
 					const model = interaction.data?.options?.[2]?.value ?? 'gpt-4o-mini';
 
-					const command = `
-						#命令
-					
-						あなたは一流のモデラーです。後輩にお題を出してモデリングしてもらいます。
-					
-						#条件：
-					
-						モデリング対象のみを5つ候補としてカンマ区切りで提示してください。
-						レベル5以上の場合は、この世の中に存在しない非常に難しいものを提示してください。
-					
-						#入力文：
-						
-						お題のレベルとジャンルを指定する。
-					
-						#出力文：
-						モデリング対象のみを5つ候補としてカンマ区切りで提示。
-					`;
-					const completion = await openAiClient.chat.completions.create({
-						model: model,
-						messages: [
-							{ role: 'system', content: command }, // 修正箇所
-							{
-								role: 'user',
-								content: `今回のお題の難しさはレベル5段階中「${level}」でジャンルは「${genre}」として、お題を考えてください。`,
-							},
-						],
-						stream: false,
-					});
-					console.log(completion);
+					const score = await openAiAction.scoreModelingImage(base64Image, model, moderingTarget, prompt);
 
 					return new JsonResponse({
 						type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-						data: {
-							content: completion.choices[0].message.content,
-						},
+						data: { content: `この画像のスコアは ${score} です。` },
 					});
 				} catch (error) {
 					console.error(error);
@@ -117,14 +100,12 @@ router.post('/', async (request: Request, env: any): Promise<Response> => {
 						data: { content: 'エラーが発生しました。' },
 					});
 				}
-				// openaiにリクエストを送信
 			}
 			default:
 				return new JsonResponse({ error: 'Unknown Type' }, { status: 400 });
 		}
 	}
 
-	console.error('Unknown Type');
 	return new JsonResponse({ error: 'Unknown Type' }, { status: 400 });
 });
 
