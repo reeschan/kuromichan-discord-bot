@@ -41,7 +41,7 @@ const MODELING_SUGGESTER: DiscordApplicationCommand = {
 };
 
 const MODELING_SCORING: DiscordApplicationCommand = {
-	name: 'modelingsuggester',
+	name: 'modelingscoring',
 	type: DiscordApplicationCommandType.CAHT_INPUT,
 	description: 'モデリング精度に関して、採点とアドバイスを提示します。',
 	options: [
