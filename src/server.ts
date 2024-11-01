@@ -83,9 +83,9 @@ router.post('/', async (request: Request, env: any): Promise<Response> => {
 					const imageResponse = await fetch(imageUrl);
 					const imageArrayBuffer = await imageResponse.arrayBuffer();
 					const base64Image = Buffer.from(imageArrayBuffer).toString('base64');
-					const moderingTarget = interaction.data?.options?.[0]?.value;
-					const prompt = interaction.data?.options?.[1]?.value;
-					const model = interaction.data?.options?.[2]?.value ?? 'gpt-4o-mini';
+					const moderingTarget = interaction.data?.options?.[1]?.value;
+					const prompt = interaction.data?.options?.[2]?.value;
+					const model = interaction.data?.options?.[3]?.value ?? 'gpt-4o-mini';
 
 					const score = await openAiAction.scoreModelingImage(base64Image, model, moderingTarget, prompt);
 

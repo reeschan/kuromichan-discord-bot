@@ -46,6 +46,12 @@ const MODELING_SCORING: DiscordApplicationCommand = {
 	description: 'モデリング精度に関して、採点とアドバイスを提示します。',
 	options: [
 		{
+			name: '画像',
+			type: 11,
+			description: 'モデリングの画像を添付',
+			required: true,
+		},
+		{
 			name: 'モデリング対象',
 			type: 3,
 			description: 'モデリングの対象物を指定(オプション)',
