@@ -69,15 +69,7 @@ router.post('/', async (request: Request, env: any): Promise<Response> => {
 				const openAiAction = new OpenAIAction(env.OPENAI_API_KEY);
 				try {
 					// 添付画像を取得してbase64に変換
-					const attachmentId = interaction.data?.resolved?.attachments ? Object.keys(interaction.data.resolved.attachments)[0] : null;
-
-					if (!attachmentId) {
-						return new JsonResponse({
-							type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-							data: { content: '画像が添付されていません。' },
-						});
-					}
-
+					const attachmentId = Object.keys(interaction.data.resolved.attachments)[0];
 					const attachment = interaction.data.resolved.attachments[attachmentId];
 					const imageUrl = attachment.url;
 					const imageResponse = await fetch(imageUrl);
@@ -87,11 +79,11 @@ router.post('/', async (request: Request, env: any): Promise<Response> => {
 					const prompt = interaction.data?.options?.[2]?.value;
 					const model = interaction.data?.options?.[3]?.value ?? 'gpt-4o-mini';
 
-					const score = await openAiAction.scoreModelingImage(base64Image, model, moderingTarget, prompt);
+					const result = await openAiAction.scoreModelingImage(base64Image, model, moderingTarget, prompt);
 
 					return new JsonResponse({
 						type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-						data: { content: `この画像のスコアは ${score} です。` },
+						data: { content: result },
 					});
 				} catch (error) {
 					console.error(error);
