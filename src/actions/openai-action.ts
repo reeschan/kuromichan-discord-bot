@@ -56,24 +56,45 @@ class OpenAIAction {
 			'あなたはAI画像評価者です。受け取った画像に対して、モデリングの精度を採点します。',
 			'画像を基に対象物の正確性、質感、全体のバランスを考慮して評価を行ってください。\n\n 背景については考慮しないものとする。',
 			'モデリングした名前の提示（無くとも可能)と画像のbase64を添付する',
-			'評価点数とどうすればより高品質なものに出来上がるかを箇条書きでアドバイスする。\n\n 出力は3行以内でお願いします。'
+			'評価点数とその根拠を述べる。\n\n どうすればより高品質なものに出来上がるかを箇条書きでアドバイスする。\n\n 出力は5行を限度とする。'
 		);
 
-		const completion = await this.openAiClient.chat.completions.create({
-			model: model,
-			messages: [
-				{ role: 'system', content: command },
-				{
-					role: 'user',
-					content: `添付の画像${target ? `は${target}を対象としてモデリングをしています。これに` : 'に'}対して採点を行ってください。${
-						prompt ? prompt : ''
-					}\n\n画像データ(base64): ${base64Image}`,
-				},
-			],
-			stream: false,
-		});
+		const getCompletion = async () => {
+			return new Promise((resolve, reject) => {
+				this.openAiClient.chat.completions
+					.create({
+						model: model,
+						messages: [
+							{ role: 'system', content: command },
+							{
+								role: 'user',
+								content: [
+									{
+										type: 'text',
+										text: `添付の画像${
+											target ? `は${target}を対象としてモデリングをしています。これに` : 'に'
+										}対して採点を行ってください。${prompt ? prompt : ''}`,
+									},
+									{
+										type: 'image_url',
+										image_url: {
+											url: `data:image/jpeg;base64,${base64Image}`,
+											detail: 'low',
+										},
+									},
+								],
+							},
+						],
+						stream: false,
+					})
+					.then((response) => resolve(response.choices[0].message.content))
+					.catch((error) => reject(error));
+			});
+		};
 
-		return completion.choices[0].message.content;
+		// Promiseをawaitして結果を取得
+		const completion = await getCompletion();
+		return completion;
 	}
 }
 
