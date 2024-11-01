@@ -79,7 +79,9 @@ router.post('/', async (request: Request, env: any): Promise<Response> => {
 					const prompt = interaction.data?.options?.[2]?.value;
 					const model = interaction.data?.options?.[3]?.value ?? 'gpt-4o-mini';
 
+					console.log('start scoring');
 					const result = await openAiAction.scoreModelingImage(base64Image, model, moderingTarget, prompt);
+					console.log(`finished scoring. result: ${result}`);
 
 					return new JsonResponse({
 						type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
