@@ -65,9 +65,20 @@ class OpenAIAction {
 				{ role: 'system', content: command },
 				{
 					role: 'user',
-					content: `以下の画像${target ? `は${target}を対象としてモデリングをしています。これに` : 'に'}対して採点を行ってください。${
-						prompt ? prompt : ''
-					}\n\n${base64Image}`,
+					content: [
+						{
+							type: 'text',
+							text: `添付の画像${target ? `は${target}を対象としてモデリングをしています。これに` : 'に'}対して採点を行ってください。${
+								prompt ? prompt : ''
+							}`,
+						},
+						{
+							type: 'image_url',
+							image_url: {
+								url: `data:image/jpeg;base64,${base64Image}`,
+							},
+						},
+					],
 				},
 			],
 			stream: false,
