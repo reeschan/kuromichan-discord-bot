@@ -35,3 +35,20 @@ jobs:
         env:
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
           CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+
+  # Slack通知処理を呼び出す
+  slack_notification:
+    # deploy_apiの後に実行されるようにする
+    needs: deploy
+    # deploy_apiが成功していても失敗していても実行されるようにする
+    if: ${{ always() }}
+    uses: ./.github/workflows/slack_notify.yml
+    with:
+      slack_channel: notify
+      # needs.<job_id>.resultで前のジョブの結果を参照できる(success、failure、cancelled、および skipped)
+      slack_color: ${{ needs.deploy_api.result == 'success' && 'good' || 'danger' }}
+      slack_username: GitHub Actions Results
+      slack_icon: https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png
+      slack_title: Deployment to Cloudflare Workers in ${{ github.repository }}
+      slack_message: ${{ needs.deploy_api.result == 'success' && ':white_check_mark:Deployment successful' || ':x:Deployment failed' }}
+    secrets: inherit
