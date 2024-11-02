@@ -46,9 +46,9 @@ jobs:
     with:
       slack_channel: notify
       # needs.<job_id>.resultで前のジョブの結果を参照できる(success、failure、cancelled、および skipped)
-      slack_color: ${{ needs.deploy_api.result == 'success' && 'good' || 'danger' }}
+      slack_color: ${{ needs.deploy.result == 'success' && 'good' || 'danger' }}
       slack_username: GitHub Actions Results
       slack_icon: https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png
       slack_title: Deployment to Cloudflare Workers in ${{ github.repository }}
-      slack_message: ${{ needs.deploy_api.result == 'success' && ':white_check_mark:Deployment successful' || ':x:Deployment failed' }}
+      slack_message: ${{ needs.deploy.result == 'success' && ':white_check_mark:Deployment successful' || ':x:Deployment failed' }}
     secrets: inherit
