@@ -8,7 +8,7 @@ import { JsonResponse } from './types';
 
 export async function handleInteraction(interaction: any, env: any): Promise<Response> {
 	// コマンドの処理
-	switch (interaction.commandName.toLowerCase()) {
+	switch (interaction.data.name.toLowerCase()) {
 		case CommandType.DELETE_POST_REGISTER:
 			return await deletePostRegister(interaction, env);
 		case CommandType.HELLO:
