@@ -5,9 +5,5 @@ interface Env {
 	DISCORD_APPLICATION_ID: string;
 	DISCORD_PUBLIC_KEY: string;
 	OPENAI_API_KEY: string;
-	COMPRESS_IMAGE: CompressWorker;
-}
-
-interface CompressWorker {
-	compressImage(image: string, size: number): Promise<string>;
+	COMPRESS_IMAGE: any;
 }
