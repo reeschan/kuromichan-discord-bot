@@ -1,7 +1,7 @@
 import { JsonResponse } from '../types';
 import { InteractionResponseType } from 'discord-interactions';
 
-export async function deletePostRegister(interaction: any, env: any) {
+export async function deletePostRegister(interaction: any, env: Env) {
 	const DELETE_POST_MAP: KVNamespace = env.DELETE_POST_MAP;
 	await DELETE_POST_MAP.put(
 		interaction.guild_id,

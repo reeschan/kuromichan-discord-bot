@@ -2,7 +2,7 @@ import { JsonResponse } from '../types';
 import { InteractionResponseType } from 'discord-interactions';
 import OpenAIAction from '../modules/openai-handler';
 
-export async function modelingScoring(interaction: any, env: any) {
+export async function modelingScoring(interaction: any, env: Env) {
 	const openAiAction = new OpenAIAction(env.OPENAI_API_KEY);
 	try {
 		const attachmentId = Object.keys(interaction.data.resolved.attachments)[0];
