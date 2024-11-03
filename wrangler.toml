@@ -7,6 +7,7 @@ compatibility_date = "2024-10-11"
 [[services]]
 binding = "COMPRESS_IMAGE"
 service = "image-compresser"
+entrypoint = "ImageCompresser" 
 
 # Workers Logs
 # Docs: https://developers.cloudflare.com/workers/observability/logs/workers-logs/
