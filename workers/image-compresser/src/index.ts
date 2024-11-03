@@ -1,7 +1,7 @@
 import { WorkerEntrypoint } from 'cloudflare:workers';
 import { compress_image } from './external/wasm/compress-image';
 
-export default class ImageCompresser extends WorkerEntrypoint {
+export class ImageCompresser extends WorkerEntrypoint {
 	async compressImage(image: string, size: number): Promise<string> {
 		return new Promise((resolve, reject) => {
 			try {
@@ -12,3 +12,9 @@ export default class ImageCompresser extends WorkerEntrypoint {
 		});
 	}
 }
+
+export default {
+	fetch() {
+		return new Response('HelloRpc is Healthy!');
+	},
+};
