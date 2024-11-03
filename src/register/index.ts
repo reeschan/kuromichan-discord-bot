@@ -1,15 +1,12 @@
-import { REST, Routes, SlashCommandBuilder } from 'discord.js';
+import { REST, Routes } from 'discord.js';
 import { CommandList } from './commands'; // コマンドリストのインポート
 
-// 環境変数の読み込み
+// 環境変数の読み込みとバリデーション
 const token = process.env.DISCORD_TOKEN;
 const applicationId = process.env.DISCORD_APPLICATION_ID;
 
-if (!token) {
-	throw new Error('The DISCORD_TOKEN environment variable is required.');
-}
-if (!applicationId) {
-	throw new Error('The DISCORD_APPLICATION_ID environment variable is required.');
+if (!token || !applicationId) {
+	throw new Error('The DISCORD_TOKEN and DISCORD_APPLICATION_ID environment variables are required.');
 }
 
 // RESTクライアントを初期化
@@ -20,10 +17,11 @@ async function registerGlobalCommands() {
 	try {
 		console.log('Started registering global application commands.');
 
-		// DiscordのAPIにPUTリクエストを送信
-		await rest.put(Routes.applicationCommands(applicationId!), { body: CommandList });
+		// DiscordのAPIにPUTリクエストを送信してコマンドを登録
+		const response = await rest.put(Routes.applicationCommands(applicationId!), { body: CommandList });
 
 		console.log('Successfully registered all global application commands.');
+		console.log('Response:', response);
 	} catch (error) {
 		console.error('Error registering global commands:', error);
 	}
