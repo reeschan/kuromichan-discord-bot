@@ -1,7 +1,7 @@
 import { WorkerEntrypoint } from 'cloudflare:workers';
 import { compress_image } from './external/wasm/compress-image';
 
-export default class extends WorkerEntrypoint {
+export default class ImageCompresser extends WorkerEntrypoint {
 	async fetch() {
 		return new Response('Hello from compresser');
 	}
