@@ -1,6 +1,6 @@
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v10';
-import { Message } from 'discord.js';
+import { DiscordMessage } from '../../../src/types';
 
 export default {
 	async scheduled(request, env, ctx): Promise<void> {
@@ -22,13 +22,13 @@ export default {
 
 					// Discordのチャンネルからメッセージを取得
 					const url = Routes.channelMessages(parsedData.channel_id);
-					const messages = (await rest.get(url)) as Message[];
+					const messages = (await rest.get(url)) as DiscordMessage[];
 
 					console.log(messages);
 
 					// 各メッセージのタイムスタンプを確認し、limitTimeを超えたメッセージを削除
 					for (const message of messages) {
-						const messageTime = new Date(message.createdTimestamp).getTime();
+						const messageTime = new Date(message.timestamp).getTime();
 
 						if (messageTime + limitTime * 60 * 1000 < Date.now()) {
 							// メッセージがlimitTimeより古い場合削除

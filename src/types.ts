@@ -33,3 +33,8 @@ export type DiscordApplicationCommand = {
 	description: string;
 	options?: DiscordApplicationCommandOption[];
 };
+
+export type DiscordMessage = {
+	id: string;
+	timestamp: string;
+};
