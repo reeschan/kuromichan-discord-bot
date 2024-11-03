@@ -35,13 +35,26 @@ const MODELING_SCORING = new SlashCommandBuilder()
 
 const HELLO = new SlashCommandBuilder().setName('hello').setDescription('挨拶を返す');
 
+const COMPRESS_IMAGE = new SlashCommandBuilder()
+	.setName('compressimage')
+	.setDescription('画像を圧縮します。')
+	.addAttachmentOption((option) => option.setName('画像').setDescription('圧縮する画像を添付').setRequired(true))
+	.addIntegerOption((option) => option.setName('サイズ').setDescription('圧縮後のサイズ(KB)').setRequired(true));
+
 export const CommandType = {
 	DELETE_POST_REGISTER: 'deletepostregister',
 	HELLO: 'hello',
 	MODELING_SUGGESTER: 'modelingsuggester',
 	MODELING_SCORING: 'modelingscoring',
+	COMPRESS_IMAGE: 'compressimage',
 } as const;
 
 export type CommandType = (typeof CommandType)[keyof typeof CommandType];
 
-export const CommandList = [DELETE_POST_REGISTER.toJSON(), MODELING_SUGGESTER.toJSON(), MODELING_SCORING.toJSON(), HELLO.toJSON()] as const;
+export const CommandList = [
+	DELETE_POST_REGISTER.toJSON(),
+	MODELING_SUGGESTER.toJSON(),
+	MODELING_SCORING.toJSON(),
+	HELLO.toJSON(),
+	COMPRESS_IMAGE.toJSON(),
+] as const;
