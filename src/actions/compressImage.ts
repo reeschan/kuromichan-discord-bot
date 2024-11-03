@@ -19,5 +19,9 @@ export async function compressImage(interaction: any, env: Env) {
 		});
 	} catch (error) {
 		console.log(error);
+		return new JsonResponse({
+			type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+			data: { content: 'エラーが発生しました。' },
+		});
 	}
 }

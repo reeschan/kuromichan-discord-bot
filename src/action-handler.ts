@@ -1,4 +1,5 @@
 // action-handler.ts
+import { compressImage } from './actions/compressImage';
 import { deletePostRegister } from './actions/deletePostRegister';
 import { hello } from './actions/hello';
 import { modelingScoring } from './actions/modelingScoring';
@@ -17,6 +18,8 @@ export async function handleInteraction(interaction: any, env: any): Promise<Res
 			return await modelingSuggester(interaction, env);
 		case CommandType.MODELING_SCORING:
 			return await modelingScoring(interaction, env);
+		case CommandType.COMPRESS_IMAGE:
+			return await compressImage(interaction, env);
 		default:
 			return new JsonResponse({ error: 'Unknown command' }, { status: 400 });
 	}
