@@ -1,67 +1,62 @@
+import { Client, GatewayIntentBits, TextChannel } from 'discord.js';
+
 export default {
 	async scheduled(request, env, ctx): Promise<void> {
 		const token = env.DISCORD_TOKEN;
-		try {
-			// KVストアから全データをリスト取得
-			const registeredDataList = await env.DELETE_POST_MAP.list();
 
-			// 各データに対して処理を実行
-			for (const key of registeredDataList.keys) {
-				const dataValue = await env.DELETE_POST_MAP.get(key.name);
+		// discord.jsクライアントを初期化
+		const client = new Client({
+			intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
+		});
 
-				if (dataValue) {
-					// データをJSONパースしてtimeフィールドを取得
-					const parsedData = JSON.parse(dataValue);
+		client.once('ready', async () => {
+			try {
+				// KVストアから全データをリスト取得
+				const registeredDataList = await env.DELETE_POST_MAP.list();
 
-					const limitTime = parsedData.time; // 格納されたタイムスタンプ (UNIX Time)
+				// 各データに対して処理を実行
+				for (const key of registeredDataList.keys) {
+					const dataValue = await env.DELETE_POST_MAP.get(key.name);
 
-					// Discordのチャンネルからメッセージを取得
-					const url = `https://discord.com/api/v10/channels/${parsedData.channel_id}/messages`;
-					const response = await fetch(url, {
-						method: 'GET',
-						headers: {
-							Authorization: `Bot ${token}`,
-							'Content-Type': 'application/json',
-						},
-					});
+					if (dataValue) {
+						// データをJSONパースしてtimeフィールドを取得
+						const parsedData = JSON.parse(dataValue);
 
-					if (response.ok) {
-						const messages = await response.json();
+						const limitTime = parsedData.time; // 格納されたタイムスタンプ (UNIX Time)
 
-						console.log(messages);
+						// Discordのチャンネルからメッセージを取得
+						const channel = (await client.channels.fetch(parsedData.channel_id)) as TextChannel;
 
-						// 各メッセージのタイムスタンプを確認し、limitTimeを超えたメッセージを削除
-						for (const message of messages as unknown as any[]) {
-							const messageTime = new Date(message.timestamp).getTime();
+						if (channel) {
+							// チャンネルのメッセージを取得
+							const messages = await channel.messages.fetch();
 
-							if (messageTime + limitTime * 60 * 1000 < Date.now()) {
-								// メッセージがlimitTimeより古い場合削除
-								const deleteUrl = `https://discord.com/api/v10/channels/${parsedData.channel_id}/messages/${message.id}`;
+							// 各メッセージのタイムスタンプを確認し、limitTimeを超えたメッセージを削除
+							for (const message of messages.values()) {
+								const messageTime = message.createdTimestamp;
 
-								const deleteResponse = await fetch(deleteUrl, {
-									method: 'DELETE',
-									headers: {
-										Authorization: `Bot ${token}`,
-										'Content-Type': 'application/json',
-									},
-								});
-
-								if (deleteResponse.ok) {
-									console.log(`Message ${message.id} deleted successfully.`);
-								} else {
-									const errorText = await deleteResponse.text();
-									console.error(`Failed to delete message ${message.id}: ${errorText}`);
+								if (messageTime + limitTime * 60 * 1000 < Date.now()) {
+									// メッセージがlimitTimeより古い場合削除
+									await message
+										.delete()
+										.then(() => console.log(`Message ${message.id} deleted successfully.`))
+										.catch((error) => console.error(`Failed to delete message ${message.id}: ${error}`));
 								}
 							}
+						} else {
+							console.error(`Channel with ID ${parsedData.channel_id} not found.`);
 						}
-					} else {
-						const errorText = await response.text();
-						console.error(`Failed to fetch messages: ${errorText}`);
 					}
 				}
+			} catch (error) {
+				console.error('Error in message processing:', error);
+			} finally {
+				// 処理完了後、クライアントをログアウト
+				client.destroy();
 			}
-		} catch (error) {
-			console.error('Error in message processing:', error);
-		}
+		});
+
+		// トークンでクライアントにログイン
+		await client.login(token);
 	},
 } satisfies ExportedHandler<Env>;
