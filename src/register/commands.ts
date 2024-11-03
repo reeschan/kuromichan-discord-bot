@@ -1,90 +1,47 @@
-import { DiscordApplicationCommand, DiscordApplicationCommandType } from '../types';
+import { SlashCommandBuilder } from '@discordjs/builders';
 
-const DELETE_POST_REGISTER: DiscordApplicationCommand = {
-	name: 'deletepostregister',
-	type: DiscordApplicationCommandType.CAHT_INPUT,
-	description: 'コマンドを打ったチャンネル内のチャットを〇seconds後に削除する',
-	options: [
-		{
-			name: '時間',
-			type: 4,
-			description: '削除するまでの時間を時間（分）で指定',
-			required: true,
-		},
-	],
-};
+const DELETE_POST_REGISTER = new SlashCommandBuilder()
+	.setName('deletepostregister')
+	.setDescription('コマンドを打ったチャンネル内のチャットを〇seconds後に削除する')
+	.addIntegerOption((option) => option.setName('時間').setDescription('削除するまでの時間を時間（分）で指定').setRequired(true));
 
-const MODELING_SUGGESTER: DiscordApplicationCommand = {
-	name: 'modelingsuggester',
-	type: DiscordApplicationCommandType.CAHT_INPUT,
-	description: 'あなたにモデリングしてもらう対象を提案します。',
-	options: [
-		{
-			name: 'レベル',
-			type: 4,
-			description: 'モデリングの難易度を1~5のintで指定(ない場合はランダム)',
-			required: false,
-		},
-		{
-			name: 'ジャンル',
-			type: 3,
-			description: 'モデリングのジャンルをstringで指定(ない場合はランダム)',
-			required: false,
-		},
-		{
-			name: 'モデル',
-			type: 3,
-			description: 'モデリングのモデルをstringで指定(ない場合はgpt-4o-mini)',
-			required: false,
-		},
-	],
-};
+const MODELING_SUGGESTER = new SlashCommandBuilder()
+	.setName('modelingsuggester')
+	.setDescription('あなたにモデリングしてもらう対象を提案します。')
+	.addIntegerOption((option) =>
+		option.setName('レベル').setDescription('モデリングの難易度を1~5のintで指定(ない場合はランダム)').setRequired(false)
+	)
+	.addStringOption((option) =>
+		option.setName('ジャンル').setDescription('モデリングのジャンルをstringで指定(ない場合はランダム)').setRequired(false)
+	)
+	.addStringOption((option) =>
+		option.setName('モデル').setDescription('モデリングのモデルをstringで指定(ない場合はgpt-4o-mini)').setRequired(false)
+	);
 
-const MODELING_SCORING: DiscordApplicationCommand = {
-	name: 'modelingscoring',
-	type: DiscordApplicationCommandType.CAHT_INPUT,
-	description: 'モデリング精度に関して、採点とアドバイスを提示します。',
-	options: [
-		{
-			name: '画像',
-			type: 11,
-			description: 'モデリングの画像を添付',
-			required: true,
-		},
-		{
-			name: 'モデリング対象',
-			type: 3,
-			description: 'モデリングの対象物を指定(オプション)',
-			required: false,
-		},
-		{
-			name: '補足プロンプト',
-			type: 3,
-			description: 'モデリングのレビューに際して、どのような観点で見てほしいかを補足してください（オプション）',
-			required: false,
-		},
-		{
-			name: 'モデル',
-			type: 3,
-			description: 'モデリングのモデルをstringで指定(ない場合はgpt-4o-mini)',
-			required: false,
-		},
-	],
-};
+const MODELING_SCORING = new SlashCommandBuilder()
+	.setName('modelingscoring')
+	.setDescription('モデリング精度に関して、採点とアドバイスを提示します。')
+	.addAttachmentOption((option) => option.setName('画像').setDescription('モデリングの画像を添付').setRequired(true))
+	.addStringOption((option) => option.setName('モデリング対象').setDescription('モデリングの対象物を指定(オプション)').setRequired(false))
+	.addStringOption((option) =>
+		option
+			.setName('補足プロンプト')
+			.setDescription('モデリングのレビューに際して、どのような観点で見てほしいかを補足してください（オプション）')
+			.setRequired(false)
+	)
+	.addStringOption((option) =>
+		option.setName('モデル').setDescription('モデリングのモデルをstringで指定(ない場合はgpt-4o-mini)').setRequired(false)
+	);
 
-const HELLO: DiscordApplicationCommand = {
-	name: 'hello',
-	type: DiscordApplicationCommandType.CAHT_INPUT,
-	description: '挨拶を返す',
-};
+const HELLO = new SlashCommandBuilder().setName('hello').setDescription('挨拶を返す');
 
-export const CommnadType = {
+export const CommandType = {
 	DELETE_POST_REGISTER: 'deletepostregister',
 	HELLO: 'hello',
 	MODELING_SUGGESTER: 'modelingsuggester',
 	MODELING_SCORING: 'modelingscoring',
 } as const;
 
-export type CommandType = (typeof CommnadType)[keyof typeof CommnadType];
+export type CommandType = (typeof CommandType)[keyof typeof CommandType];
 
-export const CommandList = [DELETE_POST_REGISTER, HELLO, MODELING_SUGGESTER, MODELING_SCORING] as const;
+export const CommandList = [DELETE_POST_REGISTER.toJSON(), MODELING_SUGGESTER.toJSON(), MODELING_SCORING.toJSON(), HELLO.toJSON()] as const;
