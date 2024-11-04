@@ -10,7 +10,7 @@ export async function compressImage(interaction: any, env: Env) {
 	const base64Image = Buffer.from(imageArrayBuffer).toString('base64');
 	const quality = interaction.data?.options?.[1]?.value ?? 80 * 1000;
 	try {
-		console.log('圧縮開始');
+		console.log('compressing image...');
 		const result = await env.COMPRESS_IMAGE.compressImage(base64Image, quality);
 		// Base64でもとにかく返すんだよ！！！！！！！！！！！ｗｗｗｗｗ discordはbase64でurl添付できないから・・・
 		return new JsonResponse({

@@ -105,61 +105,6 @@ export function compress_image(base64_data, target_size) {
     }
 }
 
-/**
- * Sample position for subsampled chroma
- */
-export const ChromaSamplePosition = Object.freeze({
-/**
- * The source video transfer function must be signaled
- * outside the AV1 bitstream.
- */
-Unknown:0,"0":"Unknown",
-/**
- * Horizontally co-located with (0, 0) luma sample, vertically positioned
- * in the middle between two luma samples.
- */
-Vertical:1,"1":"Vertical",
-/**
- * Co-located with (0, 0) luma sample.
- */
-Colocated:2,"2":"Colocated", });
-/**
- * Chroma subsampling format
- */
-export const ChromaSampling = Object.freeze({
-/**
- * Both vertically and horizontally subsampled.
- */
-Cs420:0,"0":"Cs420",
-/**
- * Horizontally subsampled.
- */
-Cs422:1,"1":"Cs422",
-/**
- * Not subsampled.
- */
-Cs444:2,"2":"Cs444",
-/**
- * Monochrome.
- */
-Cs400:3,"3":"Cs400", });
-/**
- * Allowed pixel value range
- *
- * C.f. `VideoFullRangeFlag` variable specified in ISO/IEC 23091-4/ITU-T H.273
- */
-export const PixelRange = Object.freeze({
-/**
- * Studio swing representation
- */
-Limited:0,"0":"Limited",
-/**
- * Full swing representation
- */
-Full:1,"1":"Full", });
-
-export const Tune = Object.freeze({ Psnr:0,"0":"Psnr",Psychovisual:1,"1":"Psychovisual", });
-
 async function __wbg_load(module, imports) {
     if (typeof Response === 'function' && module instanceof Response) {
         if (typeof WebAssembly.instantiateStreaming === 'function') {
@@ -264,7 +209,7 @@ async function __wbg_init(module_or_path) {
     }
 
     if (typeof module_or_path === 'undefined') {
-        module_or_path = new URL('untitled1_bg.wasm', import.meta.url);
+        module_or_path = new URL('image_compresser_bg.wasm', import.meta.url);
     }
     const imports = __wbg_get_imports();
 

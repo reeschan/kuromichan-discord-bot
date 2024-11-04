@@ -41,12 +41,26 @@ const COMPRESS_IMAGE = new SlashCommandBuilder()
 	.addAttachmentOption((option) => option.setName('画像').setDescription('圧縮する画像を添付').setRequired(true))
 	.addIntegerOption((option) => option.setName('サイズ').setDescription('圧縮後のサイズ(KB)').setRequired(true));
 
+const GAME_SUGGESTER = new SlashCommandBuilder()
+	.setName('gamesuggester')
+	.setDescription('あなたにゲームを制作してもらうお題を提案します。')
+	.addIntegerOption((option) =>
+		option.setName('レベル').setDescription('ゲームの難易度を1~5のintで指定(ない場合はランダム)').setRequired(false)
+	)
+	.addStringOption((option) =>
+		option.setName('ジャンル').setDescription('ゲームのジャンルをstringで指定(ない場合はランダム)').setRequired(false)
+	)
+	.addStringOption((option) =>
+		option.setName('モデル').setDescription('ゲームのモデルをstringで指定(ない場合はgpt-4o-mini)').setRequired(false)
+	);
+
 export const CommandType = {
 	DELETE_POST_REGISTER: 'deletepostregister',
 	HELLO: 'hello',
 	MODELING_SUGGESTER: 'modelingsuggester',
 	MODELING_SCORING: 'modelingscoring',
 	COMPRESS_IMAGE: 'compressimage',
+	GAME_SUGGESTER: 'gamesuggester',
 } as const;
 
 export type CommandType = (typeof CommandType)[keyof typeof CommandType];
@@ -57,4 +71,5 @@ export const CommandList = [
 	MODELING_SCORING.toJSON(),
 	HELLO.toJSON(),
 	COMPRESS_IMAGE.toJSON(),
+	GAME_SUGGESTER.toJSON(),
 ] as const;

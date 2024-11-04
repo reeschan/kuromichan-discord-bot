@@ -51,6 +51,29 @@ class OpenAIAction {
 		return completion.choices[0].message.content;
 	}
 
+	async suggestGame(level: number, genre: string, model: string) {
+		const command = this.generateCommand(
+			'あなたは一流のゲームクリエイターです。後輩にお題を出してゲームを制作してもらいます。',
+			'お題のゲームを3つ提示してください。一流が作るとしたら1日で作れるレベルのものを提示してください。また、各提示ゲームの満たすべき（最低限の）仕様を最低3つ箇条書きで書いてください。レベル5以上の場合は、この世の中に存在しない非常に難しいものを提示してください。',
+			'お題のレベルとジャンルを指定する。',
+			'お題のゲームを3つ、3つ箇条書きの仕様を付けて提示。マークダウンで回答する。'
+		);
+
+		const completion = await this.openAiClient.chat.completions.create({
+			model: model,
+			messages: [
+				{ role: 'system', content: command },
+				{
+					role: 'user',
+					content: `今回のお題の難しさはレベル5段階中「${level}」でジャンルは「${genre}」として、お題を考えてください。`,
+				},
+			],
+			stream: false,
+		});
+
+		return completion.choices[0].message.content;
+	}
+
 	async scoreModelingImage(base64Image: string, model: string, target?: string, prompt?: string) {
 		const command = this.generateCommand(
 			'あなたはAI画像評価者です。受け取った画像に対して、モデリングの精度を採点します。',
